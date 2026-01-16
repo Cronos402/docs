@@ -1,0 +1,35 @@
+@import 'tailwindcss';
+@import 'fumadocs-ui/css/neutral.css';
+@import 'fumadocs-ui/css/preset.css';
+
+/* Cronos402 Navy Blue Accents - Subtle styling */
+:root {
+  /* Navy accent colors */
+  --cronos-navy-800: #002D74;
+  --cronos-navy-600: #0052CC;
+  --cronos-electric: #00D4FF;
+
+  /* Override primary accent with navy */
+  --fd-primary: var(--cronos-navy-800);
+  --fd-primary-foreground: #ffffff;
+}
+
+.dark {
+  /* Lighter navy for dark mode visibility */
+  --fd-primary: #3d8bff;
+  --fd-primary-foreground: #ffffff;
+}
+
+/* Subtle navy tint on sidebar active items */
+[data-active="true"] {
+  color: var(--fd-primary) !important;
+}
+
+/* Links use navy accent */
+.prose a:not(.not-prose a) {
+  color: var(--fd-primary);
+}
+
+.prose a:not(.not-prose a):hover {
+  color: var(--cronos-electric);
+}

@@ -1,0 +1,159 @@
+---
+title: "SDK"
+description: "The first TypeScript SDK for x402 + MCP on Cronos"
+---
+
+The Cronos402 SDK gives you full control to define tools (free or paid), wire pricing, and integrate from clients. It handles **x402** payment protocol automatically on Cronos blockchain.
+
+## Features
+
+- **Built exclusively for Cronos** (Mainnet & Testnet)
+- **USDC.e gasless payments** via Cronos facilitator
+- **Native CRO payments** with user-controlled gas
+- **Simple x402 setup**
+- **Open source**
+
+## Supported Networks
+
+<Card>
+- **Cronos Mainnet** (Chain ID: 25)
+- **Cronos Testnet** (Chain ID: 338)
+</Card>
+
+## Supported Tokens
+
+<Card>
+- **USDC.e** - Bridged USDC (Stargate) - Gasless payments via Cronos facilitator
+- **CRO** - Native Cronos token - Direct transactions with user-controlled gas
+</Card>
+
+# Creating a Server
+
+You can use the `createMcpHandler` and plug that into any popular frameworks like Express, Hono, NextJS, and others.
+
+
+<Tabs items={['npm', 'pnpm', 'bun']}>
+  <Tab value="npm">npm i cronos402 @modelcontextprotocol/sdk viem zod@3</Tab>
+  <Tab value="pnpm">pnpm add cronos402 @modelcontextprotocol/sdk viem zod@3</Tab>
+  <Tab value="bun">bun add cronos402 @modelcontextprotocol/sdk viem zod@3</Tab>
+</Tabs>
+
+## Hono
+
+Here's how you can create a server.
+
+```ts
+import { Hono } from "hono"
+import { createMcpHandler } from "cronos402"
+import { z } from "zod"
+
+const app = new Hono()
+
+const handler = createMcpHandler(
+    (server) => {
+        // Paid tool - requires payment before execution
+        server.paidTool(
+            "weather",
+            "Get weather data for a city",
+            "0.01", // Price in USD
+            { city: z.string() },
+            {},
+            async ({ city }) => ({
+                content: [{ type: "text", text: `The weather in ${city} is sunny` }],
+            })
+        )
+
+        // Free tool - no payment required
+        server.tool(
+            "free_tool",
+            "Free to use",
+            { s: z.string(), city: z.string() },
+            async ({ s, city }) => ({
+                content: [{ type: "text", text: `We support ${city}` }],
+            })
+        )
+    },
+    {
+        facilitator: {
+            url: "https://facilitator.cronoslabs.org/v2/x402"
+        },
+        recipient: {
+            "cronos-testnet": "0xYOUR_TESTNET_ADDRESS",
+            "cronos-mainnet": "0xYOUR_MAINNET_ADDRESS"
+        }
+    },
+    {
+        serverInfo: { name: "cronos-weather-api", version: "1.0.0" },
+    },
+)
+
+app.use("*", (c) => handler(c.req.raw))
+
+export default app
+```
+
+
+# Client: X402 Payment Wrapper
+
+Using the `withX402Client` you can intercept and make payment requests automatically in your MCP Client. It handles both USDC.e gasless and CRO direct payments transparently.
+
+```ts
+import { Client } from "@modelcontextprotocol/sdk/client/index.js";
+import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
+import { withX402Client } from "cronos402/client";
+import { createSigner } from "cronos402";
+
+export const getClient = async () => {
+  const client = new Client({
+    name: "example-client",
+    version: "1.0.0",
+  });
+
+  const CRONOS_PRIVATE_KEY = process.env.CRONOS_PRIVATE_KEY as `0x${string}`;
+  const MCP_SERVER_URL = "http://localhost:3000/mcp"
+
+  const transport = new StreamableHTTPClientTransport(new URL(MCP_SERVER_URL));
+
+  // Wait for the connection
+  await client.connect(transport);
+
+  // Create Cronos signer (works for both testnet and mainnet)
+  const cronosSigner = await createSigner("cronos-testnet", CRONOS_PRIVATE_KEY);
+
+  return withX402Client(client, {
+    wallet: {
+      evm: cronosSigner
+    },
+    maxPaymentValue: BigInt(1000000), // 1 USDC max (6 decimals)
+    confirmationCallback: async (payments) => {
+      // Review payment details before confirming
+      console.log("Payment required:", payments);
+      return true; // Auto-confirm (or add custom logic)
+    }
+  });
+};
+
+export const getClientResponse = async () => {
+  const client = await getClient();
+
+  const tools = await client.listTools();
+  console.log("Tools:", JSON.stringify(tools, null, 2));
+
+  // Call a paid tool - payment is handled automatically
+  const res = await client.callTool({
+    name: "weather",
+    arguments: {
+      city: "Tokyo"
+    },
+  });
+  return res;
+};
+
+try {
+  console.log("[main] Starting test...");
+  const response = await getClientResponse();
+  console.log("[main] Final response:", response);
+} catch (err) {
+  console.error(err);
+}
+```

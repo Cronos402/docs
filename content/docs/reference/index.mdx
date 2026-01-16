@@ -1,0 +1,61 @@
+---
+title: API Reference
+description: Complete API reference for the Cronos402 SDK
+---
+
+The Cronos402 SDK provides everything you need to build and consume paid MCP servers on Cronos.
+
+## Installation
+
+```bash
+npm install cronos402
+```
+
+## Main Exports
+
+```typescript
+import {
+  // Server creation
+  createMcpHandler,
+  createBaseMcpHandler,
+  startStdioServer,
+
+  // Client
+  withX402Client,
+
+  // Network constants
+  CRONOS_NETWORK,
+  CRONOS_CHAIN_ID,
+  CRONOS_RPC_URL,
+  USDC_ADDRESS,
+  CRO_ADDRESS,
+  CRONOS_FACILITATOR,
+
+  // Facilitator client
+  CronosFacilitatorClient,
+  createCronosFacilitator,
+
+  // Payment utilities
+  decodeCronosPayment,
+  encodeCronosPayment,
+  createCronosPaymentHeader,
+
+  // Signers
+  createSigner,
+  createSignerFromViemAccount,
+  cronosTestnet,
+  cronos,
+
+  // Proxy & hooks
+  withProxy,
+  X402MonetizationHook,
+  LoggingHook,
+  AnalyticsHook
+} from "cronos402";
+```
+
+## Quick Links
+
+- [SDK Functions](/docs/reference/sdk) - Server and client functions
+- [Payment Flows](/docs/reference/payments) - USDC.e and CRO payment handling
+- [Constants](/docs/reference/constants) - Network addresses and configuration

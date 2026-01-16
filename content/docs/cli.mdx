@@ -1,0 +1,126 @@
+---
+title: CLI
+description: Command-line interface for connecting to paid MCP servers on Cronos
+---
+
+The Cronos402 CLI allows you to connect to paid MCP servers directly from your terminal. It handles wallet management and payment flows automatically.
+
+## Installation
+
+```bash
+npm install -g cronos402
+```
+
+Or use directly with npx:
+
+```bash
+npx cronos402 connect --help
+```
+
+## Usage
+
+### Connect to a Paid MCP Server
+
+```bash
+cronos402 connect -u https://example.com/mcp -e YOUR_PRIVATE_KEY -n cronos-testnet
+```
+
+### Options
+
+| Option | Alias | Description | Environment Variable |
+|--------|-------|-------------|---------------------|
+| `--urls` | `-u` | Comma-separated MCP server URLs (required) | - |
+| `--evm` | `-e` | Cronos private key for wallet payments | `CRONOS_PRIVATE_KEY` |
+| `--api-key` | `-a` | API key for proxy authentication | `API_KEY` |
+| `--network` | `-n` | Network: `cronos-testnet` or `cronos-mainnet` | `CRONOS_NETWORK` |
+| `--max-atomic` | - | Maximum payment limit in atomic units | `X402_MAX_ATOMIC` |
+
+## Authentication Modes
+
+The CLI supports two mutually exclusive authentication modes:
+
+### 1. Wallet Mode (Direct Payments)
+
+Use your Cronos wallet to pay for tools directly:
+
+```bash
+cronos402 connect \
+  -u https://weather-api.example.com/mcp \
+  -e 0xYOUR_PRIVATE_KEY \
+  -n cronos-testnet
+```
+
+When a tool requires payment, the CLI will:
+1. Display the payment details (network, amount, recipient)
+2. Prompt for confirmation
+3. Sign and submit the payment
+4. Retry the tool call after payment settles
+
+### 2. API Key Mode (Proxy Authentication)
+
+Use an API key to authenticate with a proxy that handles payments:
+
+```bash
+cronos402 connect \
+  -u https://proxy.cronos402.tech/mcp \
+  -a YOUR_API_KEY
+```
+
+## Environment Variables
+
+You can set credentials via environment variables instead of command-line flags:
+
+```bash
+export CRONOS_PRIVATE_KEY=0x...
+export CRONOS_NETWORK=cronos-testnet
+export X402_MAX_ATOMIC=1000000  # Max 1 USDC per payment
+
+cronos402 connect -u https://example.com/mcp
+```
+
+## Payment Confirmation
+
+When a tool requires payment, you'll see a confirmation prompt:
+
+```
+Payment Required:
+  Network: cronos-testnet
+  Max Amount: 0.01 USDC
+  Recipient: 0x1234...5678
+
+Accept payment? [Y/n]
+```
+
+The CLI automatically accepts the first payment option by default.
+
+## Multiple Servers
+
+Connect to multiple servers at once:
+
+```bash
+cronos402 connect \
+  -u https://weather.example.com/mcp,https://data.example.com/mcp \
+  -e 0xYOUR_PRIVATE_KEY \
+  -n cronos-testnet
+```
+
+## Network Configuration
+
+### Cronos Testnet
+
+- Chain ID: 338
+- RPC: https://evm-t3.cronos.org
+- Faucet: https://cronos.org/faucet
+
+### Cronos Mainnet
+
+- Chain ID: 25
+- RPC: https://evm.cronos.org
+
+## Supported Tokens
+
+| Token | Address | Decimals |
+|-------|---------|----------|
+| USDC.e | `0xc01efAaF7C5C61bEbFAeb358E1161b537b8bC0e0` (testnet) | 6 |
+| USDC.e | `0xf951eC28187D9E5Ca673Da8FE6757E6f0Be5F77C` (mainnet) | 6 |
+| CRO | Native token (zero address) | 18 |

@@ -1,0 +1,165 @@
+---
+title: Constants
+description: Network addresses and configuration values
+---
+
+## Network Identifiers
+
+```typescript
+import { CRONOS_NETWORK } from "cronos402";
+
+CRONOS_NETWORK.MAINNET  // "cronos-mainnet"
+CRONOS_NETWORK.TESTNET  // "cronos-testnet"
+```
+
+## Chain IDs
+
+```typescript
+import { CRONOS_CHAIN_ID } from "cronos402";
+
+CRONOS_CHAIN_ID.MAINNET  // 25
+CRONOS_CHAIN_ID.TESTNET  // 338
+```
+
+## RPC URLs
+
+```typescript
+import { CRONOS_RPC_URL } from "cronos402";
+
+CRONOS_RPC_URL.MAINNET  // "https://evm.cronos.org"
+CRONOS_RPC_URL.TESTNET  // "https://evm-t3.cronos.org"
+```
+
+## Token Addresses
+
+### USDC.e
+
+```typescript
+import { USDC_ADDRESS } from "cronos402";
+
+USDC_ADDRESS.MAINNET  // "0xf951eC28187D9E5Ca673Da8FE6757E6f0Be5F77C"
+USDC_ADDRESS.TESTNET  // "0xc01efAaF7C5C61bEbFAeb358E1161b537b8bC0e0"
+```
+
+### CRO (Native Token)
+
+```typescript
+import { CRO_ADDRESS } from "cronos402";
+
+CRO_ADDRESS  // "0x0000000000000000000000000000000000000000"
+```
+
+The zero address represents the native CRO token.
+
+## Facilitator
+
+```typescript
+import { CRONOS_FACILITATOR } from "cronos402";
+
+CRONOS_FACILITATOR.BASE_URL  // "https://facilitator.cronoslabs.org"
+CRONOS_FACILITATOR.VERIFY    // "/v2/x402/verify"
+CRONOS_FACILITATOR.SETTLE    // "/v2/x402/settle"
+CRONOS_FACILITATOR.SUPPORTED // "/v2/x402/supported"
+```
+
+## Token Decimals
+
+| Token | Decimals |
+|-------|----------|
+| USDC.e | 6 |
+| CRO | 18 |
+
+## Chain Configurations
+
+### Cronos Mainnet
+
+| Property | Value |
+|----------|-------|
+| Chain ID | 25 |
+| Network | cronos-mainnet |
+| RPC URL | https://evm.cronos.org |
+| Block Explorer | https://explorer.cronos.org |
+| Currency | CRO |
+
+### Cronos Testnet
+
+| Property | Value |
+|----------|-------|
+| Chain ID | 338 |
+| Network | cronos-testnet |
+| RPC URL | https://evm-t3.cronos.org |
+| Block Explorer | https://explorer.cronos.org/testnet |
+| Currency | TCRO |
+| Faucet | https://cronos.org/faucet |
+
+## EIP-712 Domain (USDC.e)
+
+The domain separator for EIP-3009 signatures:
+
+```typescript
+const domain = {
+  name: "Bridged USDC (Stargate)",
+  version: "1",
+  chainId: 338, // or 25 for mainnet
+  verifyingContract: USDC_ADDRESS.TESTNET // or MAINNET
+};
+```
+
+## Viem Chain Objects
+
+```typescript
+import { cronosTestnet, cronos } from "cronos402";
+
+// Use with viem clients
+import { createPublicClient, http } from "viem";
+
+const testnetClient = createPublicClient({
+  chain: cronosTestnet,
+  transport: http()
+});
+
+const mainnetClient = createPublicClient({
+  chain: cronos,
+  transport: http()
+});
+```
+
+## Helper Functions
+
+### Get Chain by Network
+
+```typescript
+import { getCronosChain } from "cronos402";
+
+const chain = getCronosChain("cronos-testnet");
+// Returns viem Chain object
+```
+
+### Validate Chain ID
+
+```typescript
+import { isCronosChainId } from "cronos402";
+
+isCronosChainId(25);  // true (mainnet)
+isCronosChainId(338); // true (testnet)
+isCronosChainId(1);   // false (not Cronos)
+```
+
+### Get USDC Address
+
+```typescript
+import { getUsdcAddress } from "cronos402";
+
+getUsdcAddress("cronos-testnet");  // "0xc01e..."
+getUsdcAddress("cronos-mainnet");  // "0xf951..."
+```
+
+### Normalize Network
+
+```typescript
+import { normalizeNetwork } from "cronos402";
+
+normalizeNetwork("cronos");          // "cronos-mainnet"
+normalizeNetwork("cronos-testnet");  // "cronos-testnet"
+normalizeNetwork("cronos-mainnet");  // "cronos-mainnet"
+```

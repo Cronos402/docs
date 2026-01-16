@@ -1,0 +1,95 @@
+---
+title: "Introduction"
+---
+
+![Cronos402 - First MCP Payment Gateway for Cronos](/cover.svg)
+
+<div className="text-center">
+[Website](https://cronos402.tech) · [Discover](https://cronos402.tech/servers) · [Register](https://cronos402.tech/register)
+</div>
+
+---
+
+## What is Cronos402?
+
+Cronos402 is the **first MCP payment gateway built exclusively for Cronos blockchain**. It adds **on-chain payments** to any [Model Context Protocol (MCP)](https://modelcontextprotocol.io) server using the [x402 "Payment Required" protocol](https://x402.org).
+
+It enables MCP clients — such as Claude Desktop, Cursor, and others — to make **pay-per-call requests** using **USDC.e** (gasless via Cronos facilitator) or **native CRO** instead of relying on static subscriptions or API keys.
+
+The goal is to let AI agents and applications pay only for what they use on Cronos, automatically and transparently.
+
+---
+
+## Why Cronos402 (in 30 seconds)
+
+* **Clients** → Pay only for what they use with **USDC.e** (gasless) or **CRO** — no subscriptions, no keys, no setup. Works out of the box with MCP-compatible apps (Claude Desktop, Cursor, and more).
+* **Developers** → Monetize your MCP servers on Cronos using our SDK. Set per-call USD pricing and receive payments in USDC.e or CRO automatically via the Cronos facilitator.
+* **Agents** → Perform real **agent↔service micropayments** on Cronos, enabling autonomous access to APIs, inference, data, and more with native Cronos token support.
+
+---
+
+## How it works
+
+Cronos402 handles the entire payment lifecycle transparently on Cronos blockchain for both developers and clients:
+
+- Follows x402 protocol with structured price metadata
+- Supports **USDC.e gasless payments** via Cronos facilitator (EIP-3009 transferWithAuthorization)
+- Supports **native CRO direct payments** where users control gas
+- Verifies payments on-chain, then automatically retries the original MCP request once confirmed
+- Streams usage and revenue events to dashboards and analytics endpoints
+
+This mechanism ensures that any MCP-compatible app or agent can pay per call on Cronos — either with gasless USDC.e or direct CRO transactions.
+
+```mermaid
+sequenceDiagram
+  participant C as MCP Client
+  participant CP as Client Proxy + Wallet
+  participant P as Cronos402 Proxy (Edge)
+  participant U as Upstream Service<br/>(Server Proxy / x402 MCP / api2 / mcp2)
+  participant B as Cronos Blockchain<br/>(USDC.e / CRO)
+  participant F as Cronos Facilitator<br/>(gasless USDC.e)
+  participant D as Analytics/Dashboard
+
+  C->>CP: (1) MCP call
+  CP->>P: (2) Forward request
+
+  %% normal path: proxy upstreams the original call
+  P->>U: (3) Upstream original request
+
+  alt Upstream returns price-gated
+    U-->>P: (4) 402 + price metadata
+
+    alt Proxy is authorized to pay (Cronos402 Auth/wallet & policy allows)
+      P->>F: (5a) Gasless USDC.e payment (EIP-3009 permit)
+      F->>B: (5a') Execute on-chain transfer
+      B-->>P: (6a) Payment confirmation
+      P->>U: (7a) Retry original request
+      U-->>P: (8a) Result
+      P-->>CP: (9a) Forward result
+      CP-->>C: (10a) Deliver result
+    else Proxy cannot/shouldn't pay
+      P-->>CP: (5b) Downstream 402 + price metadata
+      CP->>F: (6b) Client-side USDC.e permit OR direct CRO tx
+      F->>B: (6b') Execute payment on Cronos
+      B-->>P: (7b) Confirmation to proxy
+      P->>U: (8b) Retry original request
+      U-->>P: (9b) Result
+      P-->>CP: (10b) Forward result
+      CP-->>C: (11b) Deliver result
+    end
+
+  else Upstream returns success
+    U-->>P: (4') Tool result
+    P-->>CP: (5') Forward result
+    CP-->>C: (6') Deliver result
+  end
+
+  P-->>D: (✱) Emit usage & revenue events (both branches)
+
+```
+
+In practice, this means any MCP server can become a paid endpoint on Cronos with zero friction.
+
+The Cronos402 proxy acts as the coordination layer between **clients, wallets, and upstream services** — automatically handling `402` negotiation, Cronos on-chain payments (USDC.e gasless or CRO direct), and retries.
+
+Once a payment is confirmed via the Cronos facilitator or blockchain, the same request is retried transparently, and the result is streamed back to the client along with usage and revenue data.

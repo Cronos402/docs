@@ -1,0 +1,228 @@
+---
+title: SDK Functions
+description: Server and client functions in the Cronos402 SDK
+---
+
+## Server Creation
+
+### createMcpHandler
+
+Creates a paid MCP server handler with x402 payment support.
+
+```typescript
+import { createMcpHandler } from "cronos402";
+
+const handler = createMcpHandler({
+  facilitator: {
+    url: "https://facilitator.cronoslabs.org/v2/x402"
+  },
+  recipient: {
+    evm: {
+      address: "0xYourAddress",
+      isTestnet: true
+    }
+  },
+  serverInfo: {
+    name: "my-server",
+    version: "1.0.0"
+  }
+});
+
+// Add a free tool
+handler.tool("free_tool", "Description", {}, async () => {
+  return { content: [{ type: "text", text: "result" }] };
+});
+
+// Add a paid tool
+handler.paidTool(
+  "paid_tool",
+  "Description",
+  { price: 0.01 },
+  { param: { type: "string" } },
+  async ({ param }) => {
+    return { content: [{ type: "text", text: param }] };
+  }
+);
+```
+
+#### Configuration
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `facilitator.url` | `string` | Cronos facilitator URL |
+| `recipient.evm.address` | `string` | Payment recipient address |
+| `recipient.evm.isTestnet` | `boolean` | Use testnet or mainnet |
+| `serverInfo.name` | `string` | Server name |
+| `serverInfo.version` | `string` | Server version |
+
+### createBaseMcpHandler
+
+Creates an MCP handler without payment support.
+
+```typescript
+import { createBaseMcpHandler } from "cronos402";
+
+const handler = createBaseMcpHandler({
+  serverInfo: {
+    name: "free-server",
+    version: "1.0.0"
+  }
+});
+```
+
+### startStdioServer
+
+Starts a stdio proxy server for CLI integration.
+
+```typescript
+import { startStdioServer, createServerConnections } from "cronos402";
+
+await startStdioServer({
+  serverConnections: createServerConnections([
+    { url: "https://example.com/mcp" }
+  ]),
+  x402ClientConfig: {
+    signer: createSigner(privateKey),
+    network: "cronos-testnet"
+  }
+});
+```
+
+## Client Functions
+
+### withX402Client
+
+Wraps an MCP client with payment capabilities.
+
+```typescript
+import { Client } from "@modelcontextprotocol/sdk/client/index.js";
+import { withX402Client, createSigner } from "cronos402";
+
+const client = withX402Client(new Client({
+  name: "my-client",
+  version: "1.0.0"
+}), {
+  signer: createSigner(process.env.CRONOS_PRIVATE_KEY),
+  network: "cronos-testnet",
+  facilitator: "https://facilitator.cronoslabs.org/v2/x402",
+  onPaymentRequired: async (requirements) => {
+    // Review payment requirements
+    console.log("Amount:", requirements.maxAmountRequired);
+    console.log("Recipient:", requirements.payTo);
+    return true; // Accept or reject
+  }
+});
+```
+
+#### X402ClientConfig
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `signer` | `CronosSigner` | Wallet signer for payments |
+| `network` | `CronosNetwork` | Network to use |
+| `facilitator` | `string` | Facilitator URL |
+| `onPaymentRequired` | `function` | Callback for payment approval |
+| `maxAtomicAmount` | `bigint` | Maximum payment limit |
+
+## Signer Functions
+
+### createSigner
+
+Creates a wallet signer from a private key.
+
+```typescript
+import { createSigner } from "cronos402";
+
+const signer = createSigner("0xYourPrivateKey");
+```
+
+### createSignerFromViemAccount
+
+Creates a signer from an existing viem account.
+
+```typescript
+import { createSignerFromViemAccount } from "cronos402";
+import { privateKeyToAccount } from "viem/accounts";
+
+const account = privateKeyToAccount("0xYourPrivateKey");
+const signer = createSignerFromViemAccount(account, "cronos-testnet");
+```
+
+## Facilitator Client
+
+### CronosFacilitatorClient
+
+Direct client for the Cronos facilitator API.
+
+```typescript
+import { createCronosFacilitator } from "cronos402";
+
+const facilitator = createCronosFacilitator(
+  "https://facilitator.cronoslabs.org/v2/x402"
+);
+
+// Verify a payment
+const verification = await facilitator.verify({
+  x402Version: 1,
+  paymentHeader: "base64-encoded-payment",
+  paymentRequirements: {
+    scheme: "exact",
+    network: "cronos-testnet",
+    maxAmountRequired: "1000000",
+    payTo: "0xRecipient",
+    asset: "0xUsdcAddress"
+  }
+});
+
+// Settle a payment
+const settlement = await facilitator.settle({
+  x402Version: 1,
+  paymentHeader: "base64-encoded-payment",
+  paymentRequirements: {
+    scheme: "exact",
+    network: "cronos-testnet",
+    maxAmountRequired: "1000000",
+    payTo: "0xRecipient",
+    asset: "0xUsdcAddress"
+  }
+});
+
+// Get supported payment kinds
+const supported = await facilitator.supported();
+```
+
+## Proxy & Hooks
+
+### withProxy
+
+Creates an HTTP proxy with hook support.
+
+```typescript
+import { withProxy, X402MonetizationHook, LoggingHook } from "cronos402";
+
+const proxy = withProxy({
+  target: "https://upstream-server.com/mcp",
+  hooks: [
+    new LoggingHook(),
+    new X402MonetizationHook({
+      recipient: "0xYourAddress",
+      facilitator: "https://facilitator.cronoslabs.org/v2/x402",
+      prices: {
+        "tool_name": 0.01
+      },
+      onPaymentSettled: (event) => {
+        console.log("Payment settled:", event.txHash);
+      }
+    })
+  ]
+});
+```
+
+### Available Hooks
+
+| Hook | Description |
+|------|-------------|
+| `X402MonetizationHook` | Add payment requirements to tools |
+| `LoggingHook` | Log requests and responses |
+| `AnalyticsHook` | Track usage analytics |
+| `AuthHeadersHook` | Add authentication headers |

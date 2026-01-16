@@ -1,0 +1,43 @@
+
+> docs@0.0.5 build /Users/apple/dev/cronos/cronos402/apps/docs
+> next build
+
+   ▲ Next.js 15.5.7
+
+   Creating an optimized production build ...
+[MDX] updated map file in 29.3779999999997ms
+ ✓ Compiled successfully in 48s
+   Linting and checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/25) ...
+   Generating static pages (6/25) 
+   Generating static pages (12/25) 
+   Generating static pages (18/25) 
+ ✓ Generating static pages (25/25)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                 Size  First Load JS
+┌ ○ /_not-found                            125 B         103 kB
+├ ● /[[...slug]]                         14.5 kB         155 kB
+├   ├ /faq
+├   ├ /
+├   ├ /examples
+├   └ [+7 more paths]
+├ ƒ /api/search                            435 B         104 kB
+├ ○ /llms-full.txt                         435 B         104 kB
+└ ● /llms.mdx/[[...slug]]                  435 B         104 kB
+    ├ /llms.mdx/faq
+    ├ /llms.mdx
+    ├ /llms.mdx/examples
+    └ [+7 more paths]
++ First Load JS shared by all             103 kB
+  ├ chunks/18-bdbe4008f006778b.js        46.2 kB
+  ├ chunks/87c73c54-09e1ba5c70e60a51.js  54.2 kB
+  └ other shared chunks (total)          2.88 kB
+
+
+○  (Static)   prerendered as static content
+●  (SSG)      prerendered as static HTML (uses generateStaticParams)
+ƒ  (Dynamic)  server-rendered on demand
+

@@ -1,0 +1,75 @@
+---
+title: "CLI"
+description: "Use the Cronos402 CLI to connect to paid MCP servers"
+---
+
+The Cronos402 CLI lets you connect to paid MCP servers directly from your terminal.
+
+## Installation
+
+```bash
+npm install -g cronos402
+```
+
+Or use with npx:
+
+```bash
+npx cronos402 connect --help
+```
+
+## Quick Start
+
+### 1. Get Testnet Tokens
+
+First, get some testnet tokens:
+- TCRO: https://cronos.org/faucet
+- devUSDC.e: https://faucet.cronos.org
+
+### 2. Connect to a Server
+
+```bash
+npx cronos402 connect \
+  -u https://example-weather.cronos402.tech/mcp \
+  -e YOUR_PRIVATE_KEY \
+  -n cronos-testnet
+```
+
+### 3. Use Environment Variables
+
+For convenience, set your credentials as environment variables:
+
+```bash
+export CRONOS_PRIVATE_KEY=0x...
+export CRONOS_NETWORK=cronos-testnet
+
+npx cronos402 connect -u https://example.com/mcp
+```
+
+## Options
+
+| Option | Description |
+|--------|-------------|
+| `-u, --urls` | MCP server URLs (required) |
+| `-e, --evm` | Cronos private key |
+| `-n, --network` | `cronos-testnet` or `cronos-mainnet` |
+| `--max-atomic` | Max payment per call |
+
+## Payment Flow
+
+When you call a paid tool:
+
+1. CLI shows payment details
+2. You confirm the payment
+3. Payment is signed and sent
+4. Tool executes after payment settles
+
+```
+Payment Required:
+  Network: cronos-testnet
+  Amount: 0.01 USDC
+  Recipient: 0x1234...5678
+
+Accept? [Y/n]
+```
+
+For more details, see the [full CLI reference](/docs/cli).

@@ -1,0 +1,53 @@
+---
+title: "Cronos Facilitator"
+description: "The official Cronos x402 facilitator for gasless USDC.e payments via EIP-3009."
+---
+
+**Endpoint:** `https://facilitator.cronoslabs.org/v2/x402`
+
+The Cronos facilitator enables **gasless USDC.e payments** on the Cronos blockchain using EIP-3009 `transferWithAuthorization`. Users sign a permit off-chain, and the facilitator executes the transfer on-chain, paying the gas fees.
+
+## ✨ Features
+
+- **Gasless Payments**: Users don't need CRO for gas - the facilitator covers transaction fees
+- **EIP-3009 Support**: Uses `transferWithAuthorization` for secure, permit-based transfers
+- **USDC.e Support**: Native support for Bridged USDC (Stargate) on Cronos
+- **Instant Settlement**: Payments are verified and settled on-chain in real-time
+- **Production Ready**: Official infrastructure from Cronos Labs
+
+## 📍 Contract Addresses
+
+**USDC.e (Bridged USDC - Stargate)**:
+- **Testnet**: `0xc01efAaF7C5C61bEbFAeb358E1161b537b8bC0e0`
+- **Mainnet**: `0xf951eC28187D9E5Ca673Da8FE6757E6f0Be5F77C`
+
+## 🔐 EIP-3009 Domain
+
+The domain parameters for signing USDC.e permits:
+
+```typescript
+const domain = {
+  name: 'Bridged USDC (Stargate)',  // Must match exactly
+  version: '1',
+  chainId: 338,  // Testnet (use 25 for Mainnet)
+  verifyingContract: '0xc01efAaF7C5C61bEbFAeb358E1161b537b8bC0e0'  // USDC.e address
+}
+```
+
+## 💡 How It Works
+
+1. **Client Signs Permit**: User signs an EIP-3009 `transferWithAuthorization` message
+2. **Verify Endpoint**: Client calls `/verify` to validate the permit
+3. **Settle Endpoint**: Client calls `/settle` to execute the on-chain transfer
+4. **Payment Confirmed**: Facilitator returns proof of payment for retry
+
+## 📊 API Endpoints
+
+* `POST /verify` → Validate a payment permit before settlement
+* `POST /settle` → Execute the on-chain transfer with signed permit
+
+## 🔗 Learn More
+
+- [Cronos x402 Documentation](https://docs.cronos.org/cronos-x402-facilitator)
+- [EIP-3009 Specification](https://eips.ethereum.org/EIPS/eip-3009)
+- [x402 Protocol](https://x402.org)

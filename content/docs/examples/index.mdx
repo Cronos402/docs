@@ -1,0 +1,154 @@
+---
+title: Examples
+description: Example implementations using Cronos402
+---
+
+## Weather API Server
+
+A complete example of a paid MCP server that charges for weather data.
+
+### Server Code
+
+```typescript
+import { Hono } from "hono";
+import { createMcpHandler } from "cronos402";
+
+const app = new Hono();
+
+const handler = createMcpHandler({
+  facilitator: {
+    url: "https://facilitator.cronoslabs.org/v2/x402"
+  },
+  recipient: {
+    evm: {
+      address: "0xYourWalletAddress",
+      isTestnet: true
+    }
+  },
+  serverInfo: {
+    name: "cronos-weather-api",
+    version: "1.0.0"
+  }
+});
+
+// Free tool - no payment required
+handler.tool("list_cities", "List available cities", {}, async () => {
+  return {
+    content: [{
+      type: "text",
+      text: JSON.stringify(["London", "Tokyo", "New York"])
+    }]
+  };
+});
+
+// Paid tool - $0.01 per call
+handler.paidTool(
+  "get_weather",
+  "Get current weather for a city",
+  { price: 0.01 },
+  { city: { type: "string", description: "City name" } },
+  async ({ city }) => {
+    // Your weather API logic here
+    const weather = await fetchWeather(city);
+    return {
+      content: [{ type: "text", text: JSON.stringify(weather) }]
+    };
+  }
+);
+
+app.all("/mcp", handler.fetch);
+
+export default app;
+```
+
+### Running the Server
+
+```bash
+bun run index.ts
+```
+
+### Testing with CLI
+
+```bash
+npx cronos402 connect \
+  -u http://localhost:3000/mcp \
+  -e YOUR_PRIVATE_KEY \
+  -n cronos-testnet
+```
+
+## Client Integration
+
+Example of a client that can pay for MCP tools:
+
+```typescript
+import { Client } from "@modelcontextprotocol/sdk/client/index.js";
+import { withX402Client, createSigner } from "cronos402";
+
+// Create MCP client with payment support
+const client = withX402Client(new Client({
+  name: "my-client",
+  version: "1.0.0"
+}), {
+  signer: createSigner(process.env.CRONOS_PRIVATE_KEY),
+  network: "cronos-testnet",
+  facilitator: "https://facilitator.cronoslabs.org/v2/x402",
+  onPaymentRequired: async (requirements) => {
+    console.log("Payment required:", requirements);
+    return true; // Accept payment
+  }
+});
+
+// Connect and call paid tool
+await client.connect(transport);
+const result = await client.callTool({
+  name: "get_weather",
+  arguments: { city: "London" }
+});
+```
+
+## Monetization Wrapper
+
+Wrap an existing MCP server with payments without modifying its code:
+
+```typescript
+import { withProxy, X402MonetizationHook } from "cronos402";
+
+const proxy = withProxy({
+  target: "https://existing-mcp-server.com/mcp",
+  hooks: [
+    new X402MonetizationHook({
+      recipient: "0xYourAddress",
+      facilitator: "https://facilitator.cronoslabs.org/v2/x402",
+      prices: {
+        "expensive_tool": 0.10,  // $0.10
+        "cheap_tool": 0.001     // $0.001
+      }
+    })
+  ]
+});
+```
+
+## Environment Setup
+
+### Testnet Configuration
+
+```bash
+# .env
+CRONOS_PRIVATE_KEY=0x...
+CRONOS_NETWORK=cronos-testnet
+RECIPIENT_ADDRESS=0x...
+```
+
+### Get Testnet Tokens
+
+1. Get TCRO from faucet: https://cronos.org/faucet
+2. Get devUSDC.e from faucet: https://faucet.cronos.org
+
+### Mainnet Configuration
+
+```bash
+# .env
+CRONOS_PRIVATE_KEY=0x...
+CRONOS_NETWORK=cronos-mainnet
+RECIPIENT_ADDRESS=0x...
+```
