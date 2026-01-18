@@ -1,125 +1,25 @@
 ---
-title: "vlayer Web Proofs (zkTLS)"
-description: "Generate cryptographic proofs of tool calls using vlayer's zkTLS technology"
+title: "Partner Integrations"
+description: "Ecosystem partner integrations for Cronos402"
 ---
 
-vlayer provides **zero-knowledge TLS (zkTLS) proofs** for web requests, enabling you to generate cryptographic proofs of tool calls made through Cronos402. This allows you to verify that specific API calls were made without revealing sensitive data, creating a trustless verification layer for your MCP server interactions.
+# Partner Integrations
 
-## What are Web Proofs?
+Cronos402 is building partnerships with leading projects in the Cronos ecosystem to enhance the payment gateway experience.
 
-Web proofs are cryptographic attestations that prove a specific HTTP request was made and received a specific response, without revealing the full contents of the communication. vlayer uses zkTLS technology to generate these proofs, which can be verified independently by anyone.
+## Coming Soon
 
-## How It Works
+We're working on exciting integrations with ecosystem partners. Check back soon for updates!
 
-When you enable vlayer for your MCP requests:
+**Planned Integrations:**
+- Market data providers
+- Additional payment methods
+- Enhanced analytics
+- And more...
 
-1. **Request Execution**: Your tool call is executed through vlayer's notary service
-2. **Proof Generation**: vlayer generates a cryptographic proof of the request/response
-3. **Proof Return**: The proof is returned alongside the response data
-4. **Verification**: Anyone can verify the proof independently to confirm the request was made
+## Interested in Partnering?
 
-## Enabling vlayer in Your Client
+If you're building on Cronos and want to integrate with Cronos402, we'd love to hear from you!
 
-To enable vlayer web proofs for your MCP tool calls, add the `x-vlayer-enabled` header to your requests:
-
-```typescript
-import { Client } from "@modelcontextprotocol/sdk/client/index.js";
-import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
-import { withX402Client } from "cronos402/client";
-import { createSigner, isEvmSignerWallet } from "x402/types";
-
-const client = new Client({
-  name: "vlayer-client-example",
-  version: "1.0.0",
-});
-
-const transport = new StreamableHTTPClientTransport(new URL(MCP_SERVER_URL), {
-  requestInit: {
-    headers: {
-      'x-mcp-disable-auth': 'true',
-      'x-vlayer-enabled': 'true', // Enable vlayer web proofs
-    },
-  },
-});
-
-await client.connect(transport);
-```
-
-## Example: Generating a Proof of a Tool Call
-
-```typescript
-import { Client } from "@modelcontextprotocol/sdk/client/index.js";
-import { StreamableHTTPClientTransport } from "@modelcontextprotocol/sdk/client/streamableHttp.js";
-import { withX402Client } from "cronos402/client";
-import { createSigner, isEvmSignerWallet } from "x402/types";
-import { config } from 'dotenv';
-config();
-
-export const getClient = async () => {
-  const client = new Client({
-    name: "vlayer-client-example",
-    version: "1.0.0",
-  });
-
-  const EVM_PRIVATE_KEY = process.env.EVM_PRIVATE_KEY as string;
-  const MCP_SERVER_URL = "https://mcp.cronos402.tech/mcp?target-url=<YOUR_SERVER_ID>"
-
-  const transport = new StreamableHTTPClientTransport(new URL(MCP_SERVER_URL), {
-    requestInit: {
-      headers: {
-        'x-mcp-disable-auth': 'true',
-        'x-vlayer-enabled': 'true', // Enable vlayer web proofs
-      },
-    },
-  });
-
-  await client.connect(transport);
-
-  // Create signer for Cronos testnet
-  const evmSigner = await createSigner("cronos-testnet", EVM_PRIVATE_KEY);
-  if (!isEvmSignerWallet(evmSigner)) {
-    throw new Error("Failed to create EVM signer");
-  }
-
-  return withX402Client(client, {
-    wallet: {
-      evm: evmSigner,
-    },
-    confirmationCallback: async (payment) => {
-      // Payment confirmation logic
-      return true;
-    }
-  });
-};
-
-export const getClientResponse = async () => {
-  const client = await getClient();
-  // Call tool with vlayer proof enabled
-  const res = await client.callTool({
-    name: "getUserInfo",
-    arguments: {
-      userName: "example"
-    },
-  });
-  return res;
-};
-```
-
-## Key Features
-
-- **Zero-Knowledge**: Proofs don't reveal sensitive request/response data
-- **Verifiable**: Anyone can independently verify proofs
-- **Transparent**: Works seamlessly with existing MCP tool calls
-- **Trustless**: No need to trust a third party - proofs are cryptographic
-
-## Use Cases
-
-- **Audit Trails**: Generate verifiable proofs of API calls for compliance
-- **Dispute Resolution**: Prove that specific tool calls were made
-- **Transparency**: Enable users to verify what requests were made on their behalf
-- **Security**: Add an additional layer of cryptographic verification
-
-## Learn More
-
-- [vlayer Documentation](https://vlayer.xyz) - Learn more about zkTLS and web proofs
-- [Cronos402 GitHub](https://github.com/cronos402/cronos402) - Source code and examples
+- **GitHub**: [github.com/Cronos402/cronos402](https://github.com/Cronos402/cronos402)
+- **Issues**: [Submit a partnership proposal](https://github.com/Cronos402/cronos402/issues)
