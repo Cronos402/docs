@@ -3,7 +3,7 @@ title: CLI
 description: Command-line interface for connecting to paid MCP servers on Cronos
 ---
 
-The Cronos402 CLI allows you to connect to paid MCP servers directly from your terminal. It handles wallet management and payment flows automatically.
+The Cronos402 CLI is an **MCP proxy node** that connects your AI client (like **Cursor**, **Claude Desktop**, or other MCP-compatible apps) to paid MCP servers on Cronos. It handles wallet management and payment flows **automatically** — no manual confirmation required.
 
 ## Installation
 
@@ -35,13 +35,24 @@ cronos402 connect -u https://example.com/mcp -e YOUR_PRIVATE_KEY -n cronos-testn
 | `--network` | `-n` | Network: `cronos-testnet` or `cronos-mainnet` | `CRONOS_NETWORK` |
 | `--max-atomic` | - | Maximum payment limit in atomic units | `X402_MAX_ATOMIC` |
 
-## Authentication Modes
+## How the CLI Works
 
-The CLI supports two mutually exclusive authentication modes:
+The CLI runs as a **stdio MCP server** that acts as a bridge between your AI client and remote MCP servers. When you configure your AI client (like Cursor) to use the CLI, it:
 
-### 1. Wallet Mode (Direct Payments)
+1. Receives MCP requests from your AI client
+2. Forwards them to the remote server
+3. If payment is required (402 response), automatically handles the payment
+4. Returns the result to your AI client
 
-Use your Cronos wallet to pay for tools directly:
+This is **not** a script you run manually for each transaction — it's a persistent node that your AI client connects to.
+
+## Payment Modes
+
+The CLI supports two payment modes that can be used together or separately:
+
+### 1. Wallet Mode (Direct Payments with `--evm`)
+
+Use your Cronos wallet to pay for tools directly. Payments are **automatic** — the CLI signs and submits without prompting:
 
 ```bash
 cronos402 connect \
@@ -51,19 +62,34 @@ cronos402 connect \
 ```
 
 When a tool requires payment, the CLI will:
-1. Display the payment details (network, amount, recipient)
-2. Prompt for confirmation
-3. Sign and submit the payment
-4. Retry the tool call after payment settles
+1. Display the payment details (network, amount, recipient) in logs
+2. **Automatically sign and submit** the payment (no confirmation prompt)
+3. Retry the tool call after payment settles
 
-### 2. API Key Mode (Proxy Authentication)
+> **Safety Note**: Use `--max-atomic` to set a payment limit per call. This prevents unexpected large charges.
 
-Use an API key to authenticate with a proxy that handles payments:
+### 2. API Key Mode (Proxy Authentication with `--api-key`)
+
+Use an API key to authenticate with a Cronos402 proxy that handles payments on your behalf:
 
 ```bash
 cronos402 connect \
   -u https://proxy.cronos402.dev/mcp \
   -a YOUR_API_KEY
+```
+
+In this mode, the proxy (cronos402.dev) pays for the tools using your pre-funded account balance.
+
+### Combined Mode
+
+You can use both API key (for proxy authentication) and EVM wallet (for direct payments to non-proxy servers) together:
+
+```bash
+cronos402 connect \
+  -u https://proxy.cronos402.dev/mcp,https://other-server.com/mcp \
+  -a YOUR_API_KEY \
+  -e 0xYOUR_PRIVATE_KEY \
+  -n cronos-testnet
 ```
 
 ## Environment Variables
@@ -78,20 +104,20 @@ export X402_MAX_ATOMIC=1000000  # Max 1 USDC per payment
 cronos402 connect -u https://example.com/mcp
 ```
 
-## Payment Confirmation
+## Payment Logging
 
-When a tool requires payment, you'll see a confirmation prompt:
+When a tool requires payment, you'll see a log message (not a prompt):
 
 ```
-Payment Required:
-  Network: cronos-testnet
-  Max Amount: 0.01 USDC
-  Recipient: 0x1234...5678
-
-Accept payment? [Y/n]
+💰 Payment Required:
+   Network: cronos-testnet
+   Max Amount: 0.01 USDC
+   Recipient: 0x1234...5678
 ```
 
-The CLI automatically accepts the first payment option by default.
+The CLI **automatically accepts and processes** the payment — there is no interactive confirmation prompt. This is by design, as the CLI runs as a background proxy for your AI client.
+
+> **Important**: Use `--max-atomic` to set a maximum payment limit per call if you want to control spending.
 
 ## Multiple Servers
 

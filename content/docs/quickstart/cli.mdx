@@ -3,7 +3,7 @@ title: "CLI"
 description: "Use the Cronos402 CLI to connect to paid MCP servers"
 ---
 
-The Cronos402 CLI lets you connect to paid MCP servers directly from your terminal.
+The Cronos402 CLI is an **MCP proxy node** that lets your AI client (Cursor, Claude Desktop, etc.) connect to paid MCP servers on Cronos. It runs as a background process that handles payments automatically.
 
 ## Installation
 
@@ -50,26 +50,26 @@ npx cronos402 connect -u https://example.com/mcp
 | Option | Description |
 |--------|-------------|
 | `-u, --urls` | MCP server URLs (required) |
-| `-e, --evm` | Cronos private key |
+| `-e, --evm` | Cronos private key for direct wallet payments |
+| `-a, --api-key` | API key for Cronos402 proxy authentication |
 | `-n, --network` | `cronos-testnet` or `cronos-mainnet` |
-| `--max-atomic` | Max payment per call |
+| `--max-atomic` | Max payment per call (safety limit) |
 
 ## Payment Flow
 
-When you call a paid tool:
+When you call a paid tool, payments are **automatic** (no confirmation prompt):
 
-1. CLI shows payment details
-2. You confirm the payment
-3. Payment is signed and sent
-4. Tool executes after payment settles
+1. CLI logs the payment details
+2. Payment is automatically signed and sent
+3. Tool executes after payment settles
 
 ```
-Payment Required:
-  Network: cronos-testnet
-  Amount: 0.01 USDC
-  Recipient: 0x1234...5678
-
-Accept? [Y/n]
+💰 Payment Required:
+   Network: cronos-testnet
+   Max Amount: 0.01 USDC
+   Recipient: 0x1234...5678
 ```
+
+> **Tip**: Use `--max-atomic` to set a spending limit per call.
 
 For more details, see the [full CLI reference](/docs/cli).
