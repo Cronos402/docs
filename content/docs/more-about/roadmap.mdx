@@ -1,74 +1,184 @@
 ---
 title: Roadmap
+description: The journey of Cronos402 - from hackathon to production
 ---
 
-Cronos402 is the first MCP payment gateway built exclusively for the Cronos blockchain, developed for the Cronos x402 Paytech Hackathon.
+import { Callout } from 'fumadocs-ui/components/callout';
 
-## ✅ Phase 1: Core Implementation (Completed)
+# The Journey
 
-- ✅ Forked and customized codebase for Cronos-only support
-- ✅ Integrated Cronos x402 facilitator for gasless USDC.e payments
-- ✅ Implemented native CRO payment support
-- ✅ Removed all non-Cronos chain configurations
-
-**Status**: Production-ready on both testnet and mainnet.
-
-## ✅ Phase 2: SDK & CLI (Completed)
-
-- ✅ TypeScript SDK for creating paid MCP servers (`cronos402` package)
-- ✅ CLI tool for AI agents to consume paid services
-- ✅ Comprehensive developer documentation and API reference
-- ✅ Working examples (Weather API, client integration)
-
-**Status**: SDK ready for npm publish, CLI fully functional.
-
-## 🚧 Phase 3: Deployment & Testing (In Progress)
-
-- ✅ Testnet testing completed
-- 🔄 Mainnet deployment in progress
-- 🔄 Demo video production
-- 🔄 Final integration testing
-
-**Status**: Ready for hackathon submission.
+<div className="text-lg text-muted-foreground mb-8">
+Building the future of agentic payments on Cronos, one milestone at a time.
+</div>
 
 ---
 
-## 🔮 Future Roadmap
+## Where We Are
 
-**Post-Hackathon Enhancements:**
+<div className="grid grid-cols-1 md:grid-cols-3 gap-4 my-8">
+  <div className="relative overflow-hidden rounded-xl border bg-gradient-to-br from-emerald-500/10 to-emerald-500/5 p-6">
+    <div className="absolute top-2 right-2 text-xs font-medium px-2 py-1 rounded-full bg-emerald-500/20 text-emerald-600 dark:text-emerald-400">
+      LIVE
+    </div>
+    <div className="text-4xl mb-3">&#x26A1;</div>
+    <h3 className="font-semibold text-lg mb-2">Core Platform</h3>
+    <p className="text-sm text-muted-foreground">
+      USDC.e gasless payments, native CRO support, full SDK & CLI
+    </p>
+  </div>
 
-### Q1 2026
-- **CLI Payment Confirmation Mode**: Optional interactive confirmation prompts before processing payments (currently auto-accepts for seamless AI agent operation)
-- **Chat Feature**: Real-time chat interface for developer support and community engagement (Coming Soon)
-- Crypto.com Market Data MCP integration
-- Payment analytics dashboard
-- Enhanced developer tools
+  <div className="relative overflow-hidden rounded-xl border bg-gradient-to-br from-blue-500/10 to-blue-500/5 p-6">
+    <div className="absolute top-2 right-2 text-xs font-medium px-2 py-1 rounded-full bg-blue-500/20 text-blue-600 dark:text-blue-400">
+      LIVE
+    </div>
+    <div className="text-4xl mb-3">&#x1F310;</div>
+    <h3 className="font-semibold text-lg mb-2">Network Support</h3>
+    <p className="text-sm text-muted-foreground">
+      Cronos Mainnet (25) & Testnet (338) fully operational
+    </p>
+  </div>
 
-### Q2 2026
-- **Multilanguage Support**: Documentation and SDK in multiple languages including Spanish, Chinese, Japanese, and more
-- Additional Cronos ecosystem integrations
-- Advanced payment features (subscriptions, revenue splits)
-- Mobile SDK support
-
-### Beyond
-- Multi-signature wallet support
-- Payment scheduling and automation
-- Expanded Cronos DeFi integrations
+  <div className="relative overflow-hidden rounded-xl border bg-gradient-to-br from-purple-500/10 to-purple-500/5 p-6">
+    <div className="absolute top-2 right-2 text-xs font-medium px-2 py-1 rounded-full bg-purple-500/20 text-purple-600 dark:text-purple-400">
+      LIVE
+    </div>
+    <div className="text-4xl mb-3">&#x1F4E6;</div>
+    <h3 className="font-semibold text-lg mb-2">Developer Tools</h3>
+    <p className="text-sm text-muted-foreground">
+      npm package, documentation, examples ready to use
+    </p>
+  </div>
+</div>
 
 ---
 
-## 📊 Current Status
+## The Timeline
 
-**Live Features:**
-- USDC.e payments (gasless via Cronos facilitator)
-- Native CRO payments
-- TypeScript SDK
-- CLI tool
-- Full documentation
-- Example implementations
+<div className="relative pl-8 border-l-2 border-muted space-y-12 my-12">
 
-**Network Support:**
-- Cronos Testnet (Chain ID: 338)
-- Cronos Mainnet (Chain ID: 25)
+  {/* Q4 2025 - Completed */}
+  <div className="relative">
+    <div className="absolute -left-[41px] w-5 h-5 rounded-full bg-emerald-500 border-4 border-background"></div>
+    <div className="absolute -left-[33px] top-6 w-1 h-full bg-gradient-to-b from-emerald-500 to-transparent"></div>
+    <div className="mb-2">
+      <span className="text-xs font-bold uppercase tracking-wider text-emerald-500">Q4 2025</span>
+      <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">Completed</span>
+    </div>
+    <h3 className="text-xl font-bold mb-3">Foundation Launch</h3>
+    <div className="space-y-2 text-muted-foreground">
+      <div className="flex items-start gap-3">
+        <span className="text-emerald-500 mt-0.5">&#10003;</span>
+        <span>Cronos-exclusive MCP payment gateway</span>
+      </div>
+      <div className="flex items-start gap-3">
+        <span className="text-emerald-500 mt-0.5">&#10003;</span>
+        <span>Gasless USDC.e via Cronos facilitator (EIP-3009)</span>
+      </div>
+      <div className="flex items-start gap-3">
+        <span className="text-emerald-500 mt-0.5">&#10003;</span>
+        <span>Native CRO payment support</span>
+      </div>
+      <div className="flex items-start gap-3">
+        <span className="text-emerald-500 mt-0.5">&#10003;</span>
+        <span>TypeScript SDK & CLI tools</span>
+      </div>
+      <div className="flex items-start gap-3">
+        <span className="text-emerald-500 mt-0.5">&#10003;</span>
+        <span>Full documentation & examples</span>
+      </div>
+    </div>
+  </div>
 
-**Ready to Use:** The core platform is production-ready. Future updates will focus on ecosystem integrations and advanced features.
+  {/* Q1 2026 */}
+  <div className="relative">
+    <div className="absolute -left-[41px] w-5 h-5 rounded-full bg-blue-500 border-4 border-background"></div>
+    <div className="mb-2">
+      <span className="text-xs font-bold uppercase tracking-wider text-blue-500">Q1 2026</span>
+      <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-600 dark:text-blue-400">In Progress</span>
+    </div>
+    <h3 className="text-xl font-bold mb-3">Enhanced Experience</h3>
+    <div className="space-y-2 text-muted-foreground">
+      <div className="flex items-start gap-3">
+        <span className="text-blue-500 mt-0.5">&#9675;</span>
+        <span>Interactive CLI payment confirmation mode</span>
+      </div>
+      <div className="flex items-start gap-3">
+        <span className="text-blue-500 mt-0.5">&#9675;</span>
+        <span>Payment analytics dashboard</span>
+      </div>
+      <div className="flex items-start gap-3">
+        <span className="text-blue-500 mt-0.5">&#9675;</span>
+        <span>Crypto.com Market Data MCP integration</span>
+      </div>
+      <div className="flex items-start gap-3">
+        <span className="text-blue-500 mt-0.5">&#9675;</span>
+        <span>AI chat interface to interact with MCP tools</span>
+      </div>
+    </div>
+  </div>
+
+  {/* Q2 2026 */}
+  <div className="relative">
+    <div className="absolute -left-[41px] w-5 h-5 rounded-full bg-muted-foreground/30 border-4 border-background"></div>
+    <div className="mb-2">
+      <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Q2 2026</span>
+      <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground">Planned</span>
+    </div>
+    <h3 className="text-xl font-bold mb-3">Global Expansion</h3>
+    <div className="space-y-2 text-muted-foreground">
+      <div className="flex items-start gap-3">
+        <span className="mt-0.5">&#9675;</span>
+        <span>Multilanguage documentation (ES, ZH, JA, KO)</span>
+      </div>
+      <div className="flex items-start gap-3">
+        <span className="mt-0.5">&#9675;</span>
+        <span>Subscription & recurring payment models</span>
+      </div>
+      <div className="flex items-start gap-3">
+        <span className="mt-0.5">&#9675;</span>
+        <span>Revenue split for collaborative tools</span>
+      </div>
+      <div className="flex items-start gap-3">
+        <span className="mt-0.5">&#9675;</span>
+        <span>Mobile SDK (React Native, Flutter)</span>
+      </div>
+    </div>
+  </div>
+
+  {/* Beyond */}
+  <div className="relative">
+    <div className="absolute -left-[41px] w-5 h-5 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 border-4 border-background"></div>
+    <div className="mb-2">
+      <span className="text-xs font-bold uppercase tracking-wider bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">BEYOND</span>
+      <span className="ml-2 text-xs px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-600 dark:text-purple-400">Vision</span>
+    </div>
+    <h3 className="text-xl font-bold mb-3">What's Next</h3>
+    <div className="space-y-2 text-muted-foreground">
+      <div className="flex items-start gap-3">
+        <span className="mt-0.5">&#10022;</span>
+        <span>Voice interface - talk to AI instead of typing</span>
+      </div>
+      <div className="flex items-start gap-3">
+        <span className="mt-0.5">&#10022;</span>
+        <span>Deep Cronos DeFi integrations</span>
+      </div>
+      <div className="flex items-start gap-3">
+        <span className="mt-0.5">&#10022;</span>
+        <span>Cross-chain payment bridges</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+---
+
+## Get Started
+
+<div className="mt-6">
+  <a href="https://cronos402.dev/register" className="group rounded-xl border p-6 hover:border-primary transition-colors no-underline block">
+    <div className="text-2xl mb-2">&#x1F680;</div>
+    <h4 className="font-semibold group-hover:text-primary transition-colors">Start Building Today</h4>
+    <p className="text-sm text-muted-foreground">Register your MCP server and start earning</p>
+  </a>
+</div>
