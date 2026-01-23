@@ -19,19 +19,13 @@ export function baseOptions(): BaseLayoutProps {
       type: "icon",
       icon: "github",
       text: "GitHub",
-      url: "https://github.com/cronos402/cronos402",
+      url: "https://github.com/Cronos402",
     },
       {
       type: "icon",
       icon: "x",
       text: "X",
-      url: "https://x.com/cronos402",
-    },
-      {
-      type: "icon",
-      icon: "telegram",
-      text: "TG",
-      url: "https://t.me/cronos402",
+      url: "https://x.com/cronos402_dev",
     },
   ],
   };
